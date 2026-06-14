@@ -37,17 +37,17 @@ app.get('/health', (req, res) => {
 // Serve frontend static files if available
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const clientDist = path.join(__dirname, '../my_App/dist');
+const clientDist = path.join(__dirname, '../frontend/dist');
 
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
 
-  app.get('*', (req, res, next) => {
+  app.get('*/splat', (req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
 
-    res.sendFile(path.join(clientDist, 'index.html'), (err) => {
+    res.sendFile(path.join(clientDist, '/..frontend/dist', 'index.html'), (err) => {
       if (err) {
         next(err);
       }
@@ -73,7 +73,9 @@ process.on('SIGINT', () => {
   process.exit(0);
 });
 
+
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:5000${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
   console.log('Database: SQLite (cyon.db)');
 });
