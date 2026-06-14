@@ -26,8 +26,8 @@ function Navbar() {
     >
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <Flex align="center" gap={3}>
-          <Image src="/cyonlogo.png" alt="Youth Project" boxSize="42px" borderRadius="lg" boxShadow="lg" />
-          <Box fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: 'md', md: 'lg' }}>Youth Project</Box>
+          {/* <Image src="/cyonlogo.png" alt="Youth Project" boxSize="42px" borderRadius="lg" boxShadow="lg" /> */}
+          <Box fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: 'md', md: 'lg' }}>CYON JALINGO DIOCESE</Box>
         </Flex>
 
         <HStack spacing={3} display={{ base: 'none', md: 'flex' }} as="nav">
