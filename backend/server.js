@@ -42,12 +42,12 @@ const clientDist = path.join(__dirname, '../frontend/dist');
 if (fs.existsSync(clientDist)) {
   app.use(express.static(clientDist));
 
-  app.get('*/splat', (req, res, next) => {
+  app.get('*', (req, res, next) => {
     if (req.path.startsWith('/api')) {
       return next();
     }
 
-    res.sendFile(path.join(clientDist, '/..frontend/dist', 'index.html'), (err) => {
+    res.sendFile(path.join(clientDist, 'index.html'), (err) => {
       if (err) {
         next(err);
       }
