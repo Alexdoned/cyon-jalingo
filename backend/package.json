@@ -8,8 +8,9 @@
   "scripts": {
     "backend-dev": "nodemon server.js",
     "frontend-dev": "npm run dev --prefix ../frontend",
-    "start": "node server.js",
-    "build": "npm install && npm install --prefix ../frontend && npm run build --prefix ../frontend"
+    "build": "npm install && npm install --prefix ../frontend && npm run build --prefix ../frontend",
+    "start": "backend/node server.js"
+    
   },
 
 
