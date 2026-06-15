@@ -4,15 +4,13 @@
   "description": "CYON Jalingo Diocese Backend API",
   "type": "module",
   "main": "server.js",
- 
-  "scripts": {
-    "backend-dev": "nodemon backend/server.js",
-    "frontend-dev": "npm run dev --prefix ../frontend",
-    "build": "npm install && npm install --prefix ../frontend && npm run build --prefix ../frontend",
-    "start": "backend/node server.js"
-    
-  },
-
+   "scripts": {
+  "backend-dev": "nodemon backend/server.js",
+  "frontend-dev": "npm run dev --prefix frontend",
+  "dev": "concurrently \"npm run backend-dev\" \"npm run frontend-dev\"",
+  "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
+  "start": "node backend/server.js"
+},
 
 
   "dependencies": {
