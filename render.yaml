@@ -2,13 +2,13 @@ services:
   - type: web
     name: cyon-jalingo
     env: node
-    # Install dependencies for both backend and frontend, then build the frontend
-    buildCommand: npm install && npm run build
+    # We use 'npm run build' which will trigger the build script in package.json
+    buildCommand: npm run build
     # Start the backend server which also serves the frontend
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
-        value: 20.x
+        value: "20"
       # Optional: To use a persistent disk for SQLite so data is not lost on redeploys.
       # Note: Render free tier does NOT support disks. If you deploy on the free tier,
       # your SQLite database will reset on every deploy unless you use a PostgreSQL DB.
