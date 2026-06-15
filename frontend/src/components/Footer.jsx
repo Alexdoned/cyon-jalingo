@@ -3,8 +3,8 @@ import { Link as RouterLink } from 'react-router-dom';
 
 export default function Footer() {
   return (
-    <Box as="footer" bg="blackAlpha.60" color="whiteAlpha.900" py={8} mt={12}>
-      <Container maxW="7xl">
+    <Box as="footer" bg="blackAlpha.40" color="whiteAlpha.900" py={8} mt={12}>
+      <Container maxW="9xl" px={{ base: 4, md: 28 }}>
         <Flex direction={{ base: 'column', md: 'row' }} justify="space-between" align="flex-start" gap={8}>
           <Stack spacing={3} flex="1">
             <Heading size="md">Catholic Youth Org of Nig. Jalingo</Heading>

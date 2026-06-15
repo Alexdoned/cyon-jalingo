@@ -37,10 +37,10 @@ function Home() {
           boxShadow="2xl"
           border="1px solid"
           borderColor="whiteAlpha.200"
-          backdropFilter="saturate(180%) blur(20px)"
+          backdropFilter="saturate(180%) blur(10px)"
         >
           <Stack spacing={6} textAlign="center">
-            <Heading size="2xl" color="gray.900">Catholic Youth Org of Nig. Jalingo</Heading>
+            <Heading size="2xl" color="gray.400">Catholic Youth Org of Nig. Jalingo</Heading>
             <Text fontSize="lg" color="gray.600">
               Welcome to the youth portal for registration, deanery news, and event participation across the Jalingo Diocese.
             </Text>
