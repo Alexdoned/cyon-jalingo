@@ -1,5 +1,31 @@
 {
+  "name": "cyon-backend",
+  "version": "1.0.0",
+  "description": "CYON Jalingo Diocese Backend API",
+  "type": "module",
+  "main": "server.js",
+ 
+  "scripts": {
+    "backend-dev": "nodemon server.js",
+    "frontend-dev": "npm run dev --prefix ../frontend",
+    "build": "npm install && npm install --prefix ../frontend && npm run build --prefix ../frontend",
+    "start": "backend/node server.js"
+    
+  },
+
+
+
   "dependencies": {
-    "cross-env": "^10.1.0"
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "multer": "^1.4.5-lts.1",
+    "sqlite3": "^6.0.1",
+    "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
