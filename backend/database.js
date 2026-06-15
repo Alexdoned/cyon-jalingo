@@ -124,7 +124,10 @@ class Database {
               if (updateErr) {
                 console.error('Error migrating swiftCode to sortCode:', updateErr.message);
               }
+              this.ensureDefaultAdmin();
             });
+          } else {
+            this.ensureDefaultAdmin();
           }
         });
       } else if (hasSwiftCode) {
@@ -132,7 +135,10 @@ class Database {
           if (updateErr) {
             console.error('Error migrating swiftCode to sortCode:', updateErr.message);
           }
+          this.ensureDefaultAdmin();
         });
+      } else {
+        this.ensureDefaultAdmin();
       }
     });
   }
@@ -143,6 +149,34 @@ class Database {
       setTimeout(() => {
         resolve();
       }, 1000);
+    });
+  }
+
+  async ensureDefaultAdmin() {
+    const sql = 'SELECT COUNT(*) as count FROM admins';
+    this.db.get(sql, [], async (err, row) => {
+      if (err) {
+        console.error('Error checking admins count:', err.message);
+        return;
+      }
+
+      if (row.count === 0) {
+        console.log('No admins found. Creating default admin...');
+        try {
+          const hashedPassword = await bcrypt.hash('Lanwebanu@#34', 10);
+          const id = uuidv4();
+          const insertSql = 'INSERT INTO admins (id, username, email, password) VALUES (?, ?, ?, ?)';
+          this.db.run(insertSql, [id, 'admin', 'admin@cyon.com', hashedPassword], (insertErr) => {
+            if (insertErr) {
+              console.error('Error creating default admin:', insertErr.message);
+            } else {
+              console.log('Default admin created successfully. Username: admin');
+            }
+          });
+        } catch (hashError) {
+          console.error('Error hashing default password:', hashError.message);
+        }
+      }
     });
   }
 
