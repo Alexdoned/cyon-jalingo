@@ -68,12 +68,12 @@ function Home() {
             </Box>
 
             <Box bg="whiteAlpha.85" borderRadius="3xl" p={6} boxShadow="2xl" border="1px solid" borderColor="whiteAlpha.200">
-              <Badge colorScheme="green" mb={4}>Registration</Badge>
+              <Badge colorScheme="blue" mb={4}>Registration</Badge>
               <Heading size="md" mb={3}>Become a member</Heading>
               <Text color="gray.600" mb={4}>
                 Register for youth membership to participate in programs, receive updates, and get access to events and leadership training.
               </Text>
-              <Button as={RouterLink} to="/register" colorScheme="green">Start Registration</Button>
+              <Button as={RouterLink} to="/register" colorScheme="blue">Start Registration</Button>
             </Box>
 
             <Box bg="whiteAlpha.85" borderRadius="3xl" p={6} boxShadow="2xl" border="1px solid" borderColor="whiteAlpha.200">
