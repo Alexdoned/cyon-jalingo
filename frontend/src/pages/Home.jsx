@@ -111,7 +111,7 @@ function Home() {
                     as={RouterLink}
                     to={`/events?denary=${encodeURIComponent(denary)}`}
                     variant="solid"
-                    colorScheme="green"
+                    colorScheme="blue"
                     width="100%"
                     mb={4}
                     size="lg"

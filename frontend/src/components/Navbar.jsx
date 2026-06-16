@@ -1,4 +1,5 @@
-import { Box, Flex, HStack, Link, Button, Image, useColorModeValue } from '@chakra-ui/react';
+import { useState } from 'react';
+import { Box, Flex, HStack, Link, Button, VStack } from '@chakra-ui/react';
 import { NavLink } from 'react-router-dom';
 
 const navItems = [
@@ -11,6 +12,9 @@ const navItems = [
 ];
 
 function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleMenu = () => setIsOpen(!isOpen);
+
   return (
     <Box
       bgGradient="linear(to-r, purple.600, blue.500)"
@@ -26,7 +30,6 @@ function Navbar() {
     >
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <Flex align="center" gap={3}>
-          {/* <Image src="/cyonlogo.png" alt="Youth Project" boxSize="42px" borderRadius="lg" boxShadow="lg" /> */}
           <Box fontWeight="extrabold" letterSpacing="wide" fontSize={{ base: 'md', md: 'lg' }}>CYON JALINGO DIOCESE</Box>
         </Flex>
 
@@ -48,10 +51,42 @@ function Navbar() {
           ))}
         </HStack>
 
-        <Button as={NavLink} to="/" size="sm" colorScheme="cyan" variant="solid">
-          Explore
-        </Button>
+        <Flex display={{ base: 'none', md: 'flex' }}>
+          <Button as={NavLink} to="/" size="sm" colorScheme="cyan" variant="solid">
+            Explore
+          </Button>
+        </Flex>
+
+        <Box display={{ base: 'block', md: 'none' }} onClick={toggleMenu} cursor="pointer" fontSize="2xl" p={2}>
+          {isOpen ? '✕' : '☰'}
+        </Box>
       </Flex>
+
+      {isOpen && (
+        <Box pb={4} display={{ md: 'none' }}>
+          <VStack as="nav" spacing={4} align="stretch" mt={4}>
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                as={NavLink}
+                to={item.path}
+                onClick={toggleMenu}
+                px={3}
+                py={2}
+                rounded="md"
+                fontWeight="medium"
+                _hover={{ textDecoration: 'none', bg: 'whiteAlpha.200' }}
+                _activeLink={{ color: 'cyan.100', fontWeight: 'bold' }}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <Button as={NavLink} to="/" size="sm" colorScheme="cyan" variant="solid" onClick={toggleMenu}>
+              Explore
+            </Button>
+          </VStack>
+        </Box>
+      )}
     </Box>
   );
 }

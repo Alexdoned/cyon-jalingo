@@ -28,7 +28,7 @@ export default function Payment() {
 
   useEffect(() => {
     if (registrationId) {
-      api.get(`/register/${registrationId}`).then((res) => setRegistration(res.data?.data || res.data)).catch(() => {});
+      api.get(`/register/${registrationId}`).then((res) => setRegistration(res.data?.data || res.data)).catch(() => { });
     }
   }, [registrationId]);
 
@@ -69,7 +69,7 @@ export default function Payment() {
         <Stack spacing={8} bg="whiteAlpha.90" p={{ base: 6, md: 10 }} borderRadius="3xl" boxShadow="2xl" border="1px solid" borderColor="whiteAlpha.200">
           <Box textAlign="center">
             <Heading>Payment</Heading>
-            <Text mt={3} color="gray.600">Complete the mock payment for your registration.</Text>
+            <Text mt={3} color="gray.600">Complete the payment for your registration.</Text>
           </Box>
 
           {registration && (
@@ -114,7 +114,7 @@ export default function Payment() {
 
           <Stack direction={{ base: 'column', md: 'row' }} justify="flex-end">
             <Button variant="outline" onClick={() => navigate('/register')}>Back to Registration</Button>
-            <Button colorScheme="green" onClick={handlePay} isLoading={isLoading}>Pay $25 (Mock)</Button>
+            <Button colorScheme="green" onClick={handlePay} isLoading={isLoading}>Pay</Button>
           </Stack>
         </Stack>
       </Container>

@@ -2,7 +2,10 @@ import { Box, Image, Badge, Heading, Text, Stack } from '@chakra-ui/react';
 
 function EventCard({ event }) {
   const eventDate = new Date(event.event_date || event.date).toLocaleDateString();
-  const imageUrl = event.imageUrl || event.media?.[0]?.file_path || 'https://via.placeholder.com/640x320';
+  const rawImageUrl = event.imageUrl || event.media?.[0]?.file_path || event.media?.[0]?.filename;
+  const imageUrl = rawImageUrl 
+    ? (rawImageUrl.startsWith('http') ? rawImageUrl : `/api/events/media/${rawImageUrl.split(/[\/\\]/).pop()}`) 
+    : 'https://via.placeholder.com/640x320';
 
   return (
     <Box
