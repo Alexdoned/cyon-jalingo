@@ -56,7 +56,8 @@ export const denaryParishMap = {
     'St Parick Sabongida',
     'St Monica Namnail',
     'St Denis Pena',
-    'St Mathew Dan'
+    'St Mathew Dan',
+    'St Peter Dinya'
   ],
   karimlamido: [
     'St Joseph Lau',
