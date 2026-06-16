@@ -15,6 +15,7 @@ import {
 import EventCard from '../components/EventCard';
 import api from '../api/axiosConfig';
 import { denaryOptions } from '../utils/denaryOptions';
+import { denaryParishMap } from '../utils/denaryParishData';
 
 function Home() {
   const [events, setEvents] = useState([]);
@@ -93,21 +94,39 @@ function Home() {
           <Heading size="lg" mb={6} color="white">All Denaries</Heading>
           <Box bg="whiteAlpha.85" borderRadius="3xl" p={6} boxShadow="2xl" border="1px solid" borderColor="whiteAlpha.200">
             <Text color="gray.600" mb={4}>Click any denary to see events filtered by that region.</Text>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={4}>
+            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
               {denaryOptions.map((denary) => (
-                <Button
+                <Box
                   key={denary}
-                  as={RouterLink}
-                  to={`/events?denary=${encodeURIComponent(denary)}`}
-                  variant="solid"
-                  colorScheme="blue"
+                  bg="white"
                   borderRadius="2xl"
                   p={6}
-                  textAlign="left"
-                  justifyContent="flex-start"
+                  boxShadow="md"
+                  display="flex"
+                  flexDirection="column"
+                  _hover={{ boxShadow: 'lg', transform: 'translateY(-2px)' }}
+                  transition="all 0.2s"
                 >
-                  <Text fontWeight="semibold">{denary}</Text>
-                </Button>
+                  <Button
+                    as={RouterLink}
+                    to={`/events?denary=${encodeURIComponent(denary)}`}
+                    variant="solid"
+                    colorScheme="green"
+                    width="100%"
+                    mb={4}
+                    size="lg"
+                  >
+                    <Text fontWeight="bold" textTransform="capitalize">{denary} Deanery</Text>
+                  </Button>
+                  <Heading size="sm" mb={2} color="gray.800">Parishes:</Heading>
+                  <VStack align="start" spacing={1}>
+                    {denaryParishMap[denary]?.map((parish, idx) => (
+                      <Text key={idx} fontSize="sm" color="gray.600">
+                        • {parish}
+                      </Text>
+                    ))}
+                  </VStack>
+                </Box>
               ))}
             </SimpleGrid>
           </Box>
