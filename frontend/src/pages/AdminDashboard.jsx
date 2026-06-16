@@ -98,6 +98,8 @@ function AdminDashboard() {
       date: '',
       venue: '',
       imageUrlEvent: '',
+      photoFile: null,
+      mediaFiles: null,
     });
     onOpen();
   };
@@ -117,6 +119,8 @@ function AdminDashboard() {
       date: item.event_date ? new Date(item.event_date).toISOString().slice(0, 16) : '',
       venue: item.venue || '',
       imageUrlEvent: item.imageUrlEvent || '',
+      photoFile: null,
+      mediaFiles: null,
     });
     onOpen();
   };
@@ -153,29 +157,41 @@ function AdminDashboard() {
 
   const handleSave = async () => {
     const route = activeEntity === 'leader' ? 'leaders' : 'events';
-    const payload =
-      activeEntity === 'leader'
-        ? {
-            name: bucket.name,
-            year: bucket.year,
-            achievement: bucket.achievement,
-            photo_url: bucket.photoUrl,
-          }
-        : {
-            title: bucket.title,
-            description: bucket.description,
-            denary: bucket.denary,
-            parish: bucket.parish,
-            eventDate: bucket.date,
-            venue: bucket.venue,
-          };
+    
+    const formData = new FormData();
+    if (activeEntity === 'leader') {
+      formData.append('name', bucket.name);
+      formData.append('year', bucket.year);
+      formData.append('achievement', bucket.achievement);
+      if (bucket.photoFile) {
+        formData.append('photo', bucket.photoFile);
+      } else if (bucket.photoUrl) {
+        formData.append('photo_url', bucket.photoUrl);
+      }
+    } else {
+      formData.append('title', bucket.title);
+      formData.append('description', bucket.description);
+      formData.append('denary', bucket.denary);
+      formData.append('parish', bucket.parish);
+      formData.append('eventDate', bucket.date);
+      formData.append('venue', bucket.venue);
+      if (bucket.mediaFiles) {
+        for (let i = 0; i < bucket.mediaFiles.length; i++) {
+          formData.append('media', bucket.mediaFiles[i]);
+        }
+      }
+    }
 
     try {
       if (selectedItem) {
-        await api.put(`/${route}/${selectedItem.id}`, payload);
+        await api.put(`/${route}/${selectedItem.id}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         toast({ title: 'Updated successfully', status: 'success', duration: 3000, isClosable: true });
       } else {
-        await api.post(`/${route}`, payload);
+        await api.post(`/${route}`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
         toast({ title: 'Created successfully', status: 'success', duration: 3000, isClosable: true });
       }
       onClose();
@@ -393,8 +409,12 @@ function AdminDashboard() {
                     <Textarea value={bucket.achievement} onChange={(e) => setBucket({ ...bucket, achievement: e.target.value })} placeholder="Enter achievement details" />
                   </FormControl>
                   <FormControl>
-                    <FormLabel>Photo URL</FormLabel>
-                    <Input value={bucket.photoUrl} onChange={(e) => setBucket({ ...bucket, photoUrl: e.target.value })} />
+                    <FormLabel>Photo Upload</FormLabel>
+                    <Input type="file" accept="image/*" onChange={(e) => setBucket({ ...bucket, photoFile: e.target.files[0] })} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Or Photo URL</FormLabel>
+                    <Input value={bucket.photoUrl} onChange={(e) => setBucket({ ...bucket, photoUrl: e.target.value })} placeholder="If not uploading a file" />
                   </FormControl>
                 </>
               ) : (
@@ -422,6 +442,10 @@ function AdminDashboard() {
                   <FormControl>
                     <FormLabel>Venue</FormLabel>
                     <Input value={bucket.venue} onChange={(e) => setBucket({ ...bucket, venue: e.target.value })} />
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>Event Media (Upload)</FormLabel>
+                    <Input type="file" accept="image/*,video/*" multiple onChange={(e) => setBucket({ ...bucket, mediaFiles: e.target.files })} />
                   </FormControl>
                 </>
               )}
