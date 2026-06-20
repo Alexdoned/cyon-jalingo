@@ -17,7 +17,7 @@ function Navbar() {
 
   return (
     <Box
-      bgGradient="linear(to-r, purple.600, blue.500)"
+      bgGradient="linear(to-r, cyan.300, blue.600)"
       color="white"
       px={{ base: 4, md: 28 }}
       py={3}
