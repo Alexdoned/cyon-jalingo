@@ -50,15 +50,30 @@ function AdminLogin() {
           backdropFilter="saturate(180%) blur(20px)"
         >
           <Heading mb={6} textAlign="center">Admin Login</Heading>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="on">
           <Stack spacing={4}>
             <FormControl id="username" isRequired>
               <FormLabel>Username</FormLabel>
-              <Input value={username} onChange={(event) => setUsername(event.target.value)} />
+              <Input
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                autoComplete="username"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+              />
             </FormControl>
             <FormControl id="password" isRequired>
               <FormLabel>Password</FormLabel>
-              <Input type="password" value={password} onChange={(event) => setPassword(event.target.value)} />
+              <Input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                autoComplete="current-password"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+              />
             </FormControl>
             <Button type="submit" colorScheme="blue" isLoading={loading}>Sign In</Button>
           </Stack>
