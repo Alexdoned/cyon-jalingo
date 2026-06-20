@@ -15,7 +15,10 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ message: 'Username and password are required' });
     }
 
-    const admin = await db.verifyAdminPassword(username, password);
+    const sanitizedUsername = username.trim().toLowerCase();
+    const sanitizedPassword = password.trim();
+
+    const admin = await db.verifyAdminPassword(sanitizedUsername, sanitizedPassword);
 
     if (!admin) {
       return res.status(401).json({ message: 'Invalid credentials' });

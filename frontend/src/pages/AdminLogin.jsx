@@ -25,7 +25,9 @@ function AdminLogin() {
     event.preventDefault();
     setLoading(true);
     try {
-      const response = await api.post('/admin/login', { username, password });
+      const sanitizedUsername = username.trim().toLowerCase();
+      const sanitizedPassword = password.trim();
+      const response = await api.post('/admin/login', { username: sanitizedUsername, password: sanitizedPassword });
       localStorage.setItem('token', response.data.token);
       setAuthToken(response.data.token);
       toast({ title: 'Login successful', status: 'success', duration: 3000, isClosable: true });
@@ -59,7 +61,7 @@ function AdminLogin() {
                 onChange={(event) => setUsername(event.target.value)}
                 autoComplete="username"
                 autoCorrect="off"
-                autoCapitalize="off"
+                autoCapitalize="none"
                 spellCheck={false}
               />
             </FormControl>
@@ -71,7 +73,7 @@ function AdminLogin() {
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete="current-password"
                 autoCorrect="off"
-                autoCapitalize="off"
+                autoCapitalize="none"
                 spellCheck={false}
               />
             </FormControl>
