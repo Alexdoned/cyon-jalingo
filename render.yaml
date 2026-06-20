@@ -2,22 +2,20 @@ services:
   - type: web
     name: cyon-jalingo
     env: node
-    # We use 'npm run build' which will trigger the build script in package.json
     buildCommand: npm run build
-    # Start the backend server which also serves the frontend
     startCommand: npm start
     envVars:
       - key: NODE_VERSION
         value: "20"
-      # Optional: To use a persistent disk for SQLite so data is not lost on redeploys.
-      # Note: Render free tier does NOT support disks. If you deploy on the free tier,
-      # your SQLite database will reset on every deploy unless you use a PostgreSQL DB.
-      # If you upgrade to a paid instance, you can uncomment the disk configuration below:
-      # - key: DATABASE_PATH
-      #   value: /data/cyon.db
+      - key: DATABASE_URL
+        fromDatabase:
+          name: cyon-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
 
-    # Uncomment the below block if you are using a paid Render instance and want to persist SQLite:
-    # disk:
-    #   name: sqlite-data
-    #   mountPath: /data
-    #   sizeGB: 1
+databases:
+  - name: cyon-db
+    databaseName: cyon
+    user: cyon_user
+    plan: free
