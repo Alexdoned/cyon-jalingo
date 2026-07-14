@@ -1,0 +1,86 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Admin Login | CYON Jalingo Diocese{% endblock %}
+
+{% block extra_head %}
+<style>
+.form-control {
+    background-color: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #edf2f7;
+    border-radius: 10px;
+}
+.form-control:focus {
+    background-color: rgba(255,255,255,0.12);
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.3);
+}
+.form-control::placeholder { color: rgba(237,242,247,0.45); }
+.form-label { color: rgba(237,242,247,0.85); font-weight: 500; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-5">
+            <div class="glass-card p-4 p-md-5 shadow-lg">
+                <div class="text-center mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:72px;height:72px;background:rgba(37,99,235,0.2);border:2px solid rgba(37,99,235,0.4);">
+                        <i class="bi bi-shield-lock-fill text-info" style="font-size:2rem;"></i>
+                    </div>
+                    <h1 class="h3 fw-bold text-white mb-2">Admin Login</h1>
+                    <p class="text-white-50 mb-0">Use your admin credentials to access the dashboard.</p>
+                </div>
+
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'danger' }} rounded-3 border-0" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/admin-login" autocomplete="on">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" autocomplete="username" autocorrect="off" autocapitalize="none" spellcheck="false" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="position-relative">
+                            <input type="password" class="form-control pe-5" id="password" name="password" autocomplete="current-password" autocorrect="off" autocapitalize="none" spellcheck="false" required>
+                            <button type="button" class="btn btn-link position-absolute end-0 top-50 translate-middle-y pe-3 text-white-50" id="togglePassword" tabindex="-1">
+                                <i class="bi bi-eye" id="eyeIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold py-2">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.getElementById('togglePassword').addEventListener('click', function() {
+    const pwd = document.getElementById('password');
+    const icon = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+    } else {
+        pwd.type = 'password';
+        icon.className = 'bi bi-eye';
+    }
+});
+</script>
+{% endblock %}

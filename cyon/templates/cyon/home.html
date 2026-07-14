@@ -1,0 +1,134 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Home | CYON Jalingo Diocese{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <!-- Hero Banner -->
+    <div class="glass-card p-4 p-md-5 mb-5 shadow-lg">
+        <div class="row align-items-center text-center text-md-start">
+            <div class="col-12 col-md-8">
+                <h1 class="display-4 fw-extrabold text-white mb-3">Catholic Youth Org of Nig. Jalingo</h1>
+                <p class="lead text-white-50 fs-5 mb-4">
+                    Welcome to the youth portal for registration, deanery news, and event participation across the Jalingo Diocese.
+                </p>
+                <a href="/register" class="btn btn-primary btn-lg px-4 py-2 fw-semibold">
+                    <i class="bi bi-person-plus-fill me-2"></i>Register Now
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feature Cards -->
+    <div class="row g-4 mb-5">
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 h-100 shadow-md">
+                <span class="badge bg-purple mb-3 px-3 py-2 text-uppercase" style="background-color: #6b21a8;">Deanery</span>
+                <h3 class="h4 fw-bold text-white mb-3">Jalingo Diocese Deanery</h3>
+                <p class="text-white-50">
+                    The deanery brings youth leaders together to serve faith, community, and mission through events, training, and fellowship.
+                </p>
+                <h6 class="fw-bold text-white mt-4 mb-2">Focus areas:</h6>
+                <ul class="list-unstyled text-white-50">
+                    <li><i class="bi bi-check-circle-fill text-info me-2"></i>Leadership development</li>
+                    <li><i class="bi bi-check-circle-fill text-info me-2"></i>Parish engagement</li>
+                    <li><i class="bi bi-check-circle-fill text-info me-2"></i>Community outreach</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 h-100 shadow-md">
+                <span class="badge mb-3 px-3 py-2 text-uppercase" style="background-color: #2563eb;">Registration</span>
+                <h3 class="h4 fw-bold text-white mb-3">Become a member</h3>
+                <p class="text-white-50">
+                    Register for youth membership to participate in programs, receive updates, and get access to events and leadership training.
+                </p>
+                <div class="mt-4">
+                    <a href="/register" class="btn btn-primary px-3 py-2">Start Registration</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-md-4">
+            <div class="glass-card p-4 h-100 shadow-md">
+                <span class="badge mb-3 px-3 py-2 text-uppercase" style="background-color: #0d9488;">Payment</span>
+                <h3 class="h4 fw-bold text-white mb-3">Payment Information</h3>
+                <p class="text-white-50">
+                    Use the account below for payments and contributions to the Catholic Youth Organization of Nigeria, Jalingo.
+                </p>
+                <div class="mt-4">
+                    <h6 class="fw-bold text-white mb-1">Bank:</h6>
+                    <p class="text-white-50 mb-3">Zenith Bank</p>
+                    <h6 class="fw-bold text-white mb-1">Account Number:</h6>
+                    <p class="text-white-50 mb-0 font-monospace">1013883316</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Denaries Section -->
+    <div class="mb-5">
+        <h2 class="h3 fw-bold text-white mb-4">All Denaries</h2>
+        <div class="glass-card p-4">
+            <p class="text-white-50 mb-4">Click any denary to see events filtered by that region.</p>
+            <div class="row g-4">
+                {% for denary, parishes in denary_parish_map.items %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="p-4 bg-dark bg-opacity-25 rounded-4 border border-secondary border-opacity-25 h-100 d-flex flex-column transition-transform shadow-sm" style="transition: transform 0.2s ease;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                        <a href="/events?denary={{ denary }}" class="btn btn-primary w-100 mb-3 py-2 fw-bold text-capitalize">
+                            {{ denary }} Deanery
+                        </a>
+                        <h6 class="fw-bold text-white mb-2">Parishes:</h6>
+                        <ul class="list-unstyled mb-0 text-white-50 flex-grow-1">
+                            {% for parish in parishes %}
+                            <li class="mb-1 small">• {{ parish }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Events Section -->
+    <div class="mb-5">
+        <h2 class="h3 fw-bold text-white mb-4">Upcoming Events</h2>
+        <div class="row g-4">
+            {% if events %}
+                {% for event in events %}
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 rounded-4 overflow-hidden shadow bg-white text-dark transition-all border-0" style="transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 1rem 3rem rgba(0,0,0,.175)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+                        {% if event.first_media %}
+                            <img src="/api/events/media/{{ event.first_media.filename }}" alt="{{ event.title }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=640&auto=format&fit=crop&q=60" alt="{{ event.title }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body p-4">
+                            <span class="badge bg-purple-subtle text-purple mb-2" style="color: #6b21a8; background-color: #f3e8ff;">{{ event.parish|default:"Jalingo Diocese" }}</span>
+                            <h5 class="card-title fw-bold mb-2">{{ event.title }}</h5>
+                            <p class="text-muted small mb-3"><i class="bi bi-calendar-event me-2"></i>{{ event.event_date|date:"M d, Y, h:i A" }}</p>
+                            <p class="card-text text-secondary mb-0">{{ event.description|truncatewords:20 }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12">
+                    <p class="text-white-50">No events available yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bottom CTA Section -->
+    <div class="glass-card p-4 p-md-5 text-center shadow-lg mb-5">
+        <h2 class="h3 fw-bold text-white mb-3">Stay Connected</h2>
+        <p class="text-white-50 max-w-2xl mx-auto mb-4">
+            Register today and use the Zenith Bank account below to complete payment. Join the Catholic Youth Org of Nig. Jalingo for fellowship, service, and growth.
+        </p>
+        <p class="text-white fw-medium mb-1">Account: 1013883316 | Zenith Bank</p>
+        <p class="text-white fw-medium mb-4">Church: Catholic Youth Org of Nig. Jalingo</p>
+        <a href="/register" class="btn btn-primary px-4 py-2">Register and Pay</a>
+    </div>
+</div>
+{% endblock %}

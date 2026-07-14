@@ -1,0 +1,63 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Payment Successful | CYON Jalingo Diocese{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
+            <div class="glass-card p-4 p-md-5 shadow-lg text-center">
+                <!-- Success Icon -->
+                <div class="mb-4">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width:90px;height:90px;background:rgba(22,163,74,0.2);border:2px solid rgba(22,163,74,0.4);">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size:3rem;"></i>
+                    </div>
+                    <h1 class="display-6 fw-bold text-white mb-2">Payment Successful!</h1>
+                    <p class="text-white-50 fs-5">
+                        Thank you{% if registration %}, <strong class="text-info">{{ registration.name }}</strong>{% endif %} — your payment was completed successfully.
+                    </p>
+                </div>
+
+                {% if payment %}
+                <div class="p-4 rounded-4 mb-5 text-start" style="background:rgba(22,163,74,0.1);border:1px solid rgba(22,163,74,0.25);">
+                    <h5 class="fw-semibold text-success mb-3"><i class="bi bi-receipt me-2"></i>Transaction Receipt</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <span class="text-white-50 small d-block">Transaction ID</span>
+                            <span class="text-white fw-semibold font-monospace">{{ payment.transaction_id }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-white-50 small d-block">Amount Paid</span>
+                            <span class="text-white fw-bold fs-5">${{ payment.amount }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-white-50 small d-block">Status</span>
+                            <span class="badge bg-success px-3 py-2 fs-6">{{ payment.status|capfirst }}</span>
+                        </div>
+                        {% if registration %}
+                        <div class="col-6">
+                            <span class="text-white-50 small d-block">Denary</span>
+                            <span class="text-white">{{ registration.denary|capfirst }}</span>
+                        </div>
+                        <div class="col-6">
+                            <span class="text-white-50 small d-block">Parish</span>
+                            <span class="text-white">{{ registration.parish }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-center gap-3 flex-wrap">
+                    <a href="/" class="btn btn-info btn-lg px-4 fw-semibold">
+                        <i class="bi bi-house-fill me-2"></i>Return Home
+                    </a>
+                    <a href="/events" class="btn btn-outline-light btn-lg px-4">
+                        <i class="bi bi-calendar-event me-2"></i>View Events
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

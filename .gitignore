@@ -1,5 +1,24 @@
+# Node legacy
 node_modules/
-.env
 /frontend/node_modules/
-.DS_Store
 dist/
+
+# Python / Django
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+staticfiles/
+db.sqlite3
+cyon_backup.db
+*.env
+
+# OS
+.DS_Store
+
+# Media (uploaded files — keep in production storage)
+media/
+
+# Secrets
+.env
+backend/.env

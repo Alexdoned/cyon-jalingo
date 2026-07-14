@@ -1,0 +1,430 @@
+{% extends 'cyon/base.html' %}
+{% load cyon_filters %}
+
+{% block title %}Admin Dashboard | CYON Jalingo Diocese{% endblock %}
+
+{% block extra_head %}
+<style>
+.form-control, .form-select, textarea.form-control {
+    background-color: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #edf2f7;
+    border-radius: 10px;
+}
+.form-control:focus, .form-select:focus {
+    background-color: rgba(255,255,255,0.12);
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.3);
+}
+.form-control::placeholder { color: rgba(237,242,247,0.45); }
+.form-label { color: rgba(237,242,247,0.85); font-weight: 500; }
+.form-select option, .form-select optgroup { background: #111a3a; color: #edf2f7; }
+.nav-tabs { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.nav-tabs .nav-link { color: rgba(255,255,255,0.55); border: none; border-radius: 50px; padding: 0.6rem 1.4rem; font-weight: 500; }
+.nav-tabs .nav-link:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
+.nav-tabs .nav-link.active { color: #fff; background: rgba(37,99,235,0.4); border: 1px solid rgba(37,99,235,0.5); font-weight: 700; }
+.table { color: #edf2f7; }
+.table thead { background: rgba(255,255,255,0.08); }
+.table th { border-color: rgba(255,255,255,0.1); color: rgba(237,242,247,0.6); font-weight: 600; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.05em; }
+.table td { border-color: rgba(255,255,255,0.07); vertical-align: middle; }
+.table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.modal-content { background: #111a3a; color: #edf2f7; border: 1px solid rgba(255,255,255,0.12); border-radius: 18px; }
+.modal-header { border-bottom: 1px solid rgba(255,255,255,0.1); }
+.modal-footer { border-top: 1px solid rgba(255,255,255,0.1); }
+.btn-close { filter: invert(1) grayscale(100%) brightness(200%); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-md-5">
+    <div class="glass-card p-4 p-md-5 shadow-lg">
+        <!-- Header -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+            <h1 class="h2 fw-bold text-white mb-0">
+                <i class="bi bi-speedometer2 me-2 text-info"></i>Admin Dashboard
+            </h1>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-info btn-sm px-3" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                    <i class="bi bi-key-fill me-1"></i>Change Password
+                </button>
+                <a href="/admin-logout" class="btn btn-outline-danger btn-sm px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i>Logout
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-3 text-center" style="background:rgba(37,99,235,0.15);border:1px solid rgba(37,99,235,0.25);">
+                    <div class="h2 fw-bold text-info mb-0">{{ registrations|length }}</div>
+                    <div class="text-white-50 small">Registrations</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-3 text-center" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.25);">
+                    <div class="h2 fw-bold text-white mb-0">{{ leaders|length }}</div>
+                    <div class="text-white-50 small">Leaders</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-3 text-center" style="background:rgba(22,163,74,0.15);border:1px solid rgba(22,163,74,0.25);">
+                    <div class="h2 fw-bold text-white mb-0">{{ events|length }}</div>
+                    <div class="text-white-50 small">Events</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-3 text-center" style="background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.25);">
+                    <div class="h2 fw-bold text-warning mb-0">{{ pending_count }}</div>
+                    <div class="text-white-50 small">Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4" id="dashboardTabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#leadersTab"><i class="bi bi-people-fill me-1"></i>Leaders</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#eventsTab"><i class="bi bi-calendar-event-fill me-1"></i>Events</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#membersTab"><i class="bi bi-person-check-fill me-1"></i>Memberships <span class="badge bg-warning text-dark ms-1">{{ pending_count }}</span></a></li>
+        </ul>
+
+        <div class="tab-content" id="dashboardTabContent">
+            <!-- LEADERS TAB -->
+            <div class="tab-pane fade show active" id="leadersTab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-white mb-0">Leader Management</h4>
+                    <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#leaderModal" onclick="openLeaderModal()">
+                        <i class="bi bi-plus-circle-fill me-1"></i>Post New Leader
+                    </button>
+                </div>
+                {% if leaders %}
+                <div class="table-responsive rounded-3 overflow-hidden" style="border:1px solid rgba(255,255,255,0.08);">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Year</th>
+                                <th>Achievement</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for leader in leaders %}
+                            <tr>
+                                <td class="fw-medium">{{ leader.name }}</td>
+                                <td><span class="badge bg-secondary px-3">{{ leader.year }}</span></td>
+                                <td class="text-white-50" style="max-width:280px;">{{ leader.achievement|truncatewords:12 }}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-warning btn-sm px-3" onclick='openLeaderModal({{ leader.id }}, {{ leader.name|tojson }}, {{ leader.year }}, {{ leader.achievement|tojson }}, {{ leader.photo_url|default:""|tojson }})'>
+                                            <i class="bi bi-pencil-fill me-1"></i>Edit
+                                        </button>
+                                        <form method="POST" action="/admin-dashboard/leader/{{ leader.id }}/delete" onsubmit="return confirm('Delete this leader?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm px-3">
+                                                <i class="bi bi-trash-fill me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-white-50">No leaders posted yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- EVENTS TAB -->
+            <div class="tab-pane fade" id="eventsTab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-white mb-0">Event Management</h4>
+                    <button class="btn btn-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#eventModal" onclick="openEventModal()">
+                        <i class="bi bi-plus-circle-fill me-1"></i>Post New Event
+                    </button>
+                </div>
+                {% if events %}
+                <div class="table-responsive rounded-3 overflow-hidden" style="border:1px solid rgba(255,255,255,0.08);">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Denary</th>
+                                <th>Date</th>
+                                <th>Venue</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for event in events %}
+                            <tr>
+                                <td class="fw-medium">{{ event.title }}</td>
+                                <td><span class="badge bg-info text-dark text-capitalize px-3">{{ event.denary }}</span></td>
+                                <td class="text-white-50 small">{{ event.event_date|date:"M d, Y, h:i A" }}</td>
+                                <td class="text-white-50">{{ event.venue|default:"—" }}</td>
+                                <td>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-warning btn-sm px-3" onclick='openEventModal({{ event.id }}, {{ event.title|tojson }}, {{ event.description|default:""|tojson }}, {{ event.denary|tojson }}, {{ event.parish|default:""|tojson }}, "{{ event.event_date|date:"Y-m-d\TH:i" }}", {{ event.venue|default:""|tojson }})'>
+                                            <i class="bi bi-pencil-fill me-1"></i>Edit
+                                        </button>
+                                        <form method="POST" action="/admin-dashboard/event/{{ event.id }}/delete" onsubmit="return confirm('Delete this event?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm px-3">
+                                                <i class="bi bi-trash-fill me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-white-50">No events posted yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- MEMBERS TAB -->
+            <div class="tab-pane fade" id="membersTab">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4 class="fw-bold text-white mb-0">Membership Approvals</h4>
+                    <a href="/admin-dashboard" class="btn btn-outline-secondary btn-sm px-3">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                    </a>
+                </div>
+                {% if registrations %}
+                <div class="table-responsive rounded-3 overflow-hidden" style="border:1px solid rgba(255,255,255,0.08);">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Denary</th>
+                                <th>Parish</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for reg in registrations %}
+                            <tr>
+                                <td class="fw-medium">{{ reg.name }}</td>
+                                <td class="text-white-50 small">{{ reg.email }}</td>
+                                <td class="text-capitalize">{{ reg.denary }}</td>
+                                <td class="text-white-50">{{ reg.parish }}</td>
+                                <td>
+                                    {% if reg.status == 'approved' %}
+                                    <span class="badge bg-success px-3 py-2">Approved</span>
+                                    {% elif reg.status == 'rejected' %}
+                                    <span class="badge bg-danger px-3 py-2">Rejected</span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark px-3 py-2">Pending</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <form method="POST" action="/admin-dashboard/registration/{{ reg.id }}/status">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="approved">
+                                            <button type="submit" class="btn btn-success btn-sm px-3">Approve</button>
+                                        </form>
+                                        <form method="POST" action="/admin-dashboard/registration/{{ reg.id }}/status">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="status" value="rejected">
+                                            <button type="submit" class="btn btn-warning btn-sm px-3">Reject</button>
+                                        </form>
+                                        <form method="POST" action="/admin-dashboard/registration/{{ reg.id }}/delete" onsubmit="return confirm('Delete this member record?')">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-danger btn-sm px-3">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-white-50">No registrations yet.</p>
+                {% endif %}
+            </div>
+        </div><!-- /tab-content -->
+    </div>
+</div>
+
+<!-- LEADER MODAL -->
+<div class="modal fade" id="leaderModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="leaderModalTitle">Post New Leader</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="/admin-dashboard/leader/save" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="leader_id" id="leader_id">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label">Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="name" id="leaderName" required>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Year <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" name="year" id="leaderYear" min="1900" max="2100" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Achievement <span class="text-danger">*</span></label>
+              <textarea class="form-control" name="achievement" id="leaderAchievement" rows="3" required></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Upload Photo</label>
+              <input type="file" class="form-control" name="photo" accept="image/*">
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Or Photo URL</label>
+              <input type="url" class="form-control" name="photo_url" id="leaderPhotoUrl" placeholder="https://...">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary px-4" id="leaderSaveBtn">Create Leader</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- EVENT MODAL -->
+<div class="modal fade" id="eventModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="eventModalTitle">Post New Event</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="/admin-dashboard/event/save" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="event_id" id="event_id">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Title <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" name="title" id="eventTitle" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea class="form-control" name="description" id="eventDescription" rows="3"></textarea>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Denary <span class="text-danger">*</span></label>
+              <select class="form-select" name="denary" id="eventDenary" required>
+                <option value="" disabled selected>Select denary</option>
+                {% for denary in denaries %}
+                <option value="{{ denary }}">{{ denary|capfirst }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Parish</label>
+              <input type="text" class="form-control" name="parish" id="eventParish">
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Event Date <span class="text-danger">*</span></label>
+              <input type="datetime-local" class="form-control" name="event_date" id="eventDate" required>
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label">Venue</label>
+              <input type="text" class="form-control" name="venue" id="eventVenue">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Media Files (images/videos, up to 20)</label>
+              <input type="file" class="form-control" name="media" accept="image/*,video/*" multiple>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary px-4" id="eventSaveBtn">Create Event</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold">Change Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="POST" action="/admin-change-password">
+        {% csrf_token %}
+        <div class="modal-body">
+          {% if pw_messages %}
+          <div class="alert alert-danger rounded-3 border-0 mb-3">{{ pw_messages }}</div>
+          {% endif %}
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input type="password" class="form-control" name="current_password" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input type="password" class="form-control" name="new_password" required>
+          </div>
+          <div class="mb-0">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" name="confirm_password" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary px-4">Change Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function openLeaderModal(id, name, year, achievement, photoUrl) {
+    const editing = id !== undefined;
+    document.getElementById('leaderModalTitle').textContent = editing ? 'Edit Leader' : 'Post New Leader';
+    document.getElementById('leaderSaveBtn').textContent = editing ? 'Update Leader' : 'Create Leader';
+    document.getElementById('leader_id').value = editing ? id : '';
+    document.getElementById('leaderName').value = editing ? name : '';
+    document.getElementById('leaderYear').value = editing ? year : '';
+    document.getElementById('leaderAchievement').value = editing ? achievement : '';
+    document.getElementById('leaderPhotoUrl').value = editing ? (photoUrl || '') : '';
+    new bootstrap.Modal(document.getElementById('leaderModal')).show();
+}
+
+function openEventModal(id, title, description, denary, parish, date, venue) {
+    const editing = id !== undefined;
+    document.getElementById('eventModalTitle').textContent = editing ? 'Edit Event' : 'Post New Event';
+    document.getElementById('eventSaveBtn').textContent = editing ? 'Update Event' : 'Create Event';
+    document.getElementById('event_id').value = editing ? id : '';
+    document.getElementById('eventTitle').value = editing ? title : '';
+    document.getElementById('eventDescription').value = editing ? (description || '') : '';
+    const denaryEl = document.getElementById('eventDenary');
+    if (editing) {
+        [...denaryEl.options].forEach(o => o.selected = o.value === denary);
+    } else {
+        denaryEl.selectedIndex = 0;
+    }
+    document.getElementById('eventParish').value = editing ? (parish || '') : '';
+    document.getElementById('eventDate').value = editing ? date : '';
+    document.getElementById('eventVenue').value = editing ? (venue || '') : '';
+    new bootstrap.Modal(document.getElementById('eventModal')).show();
+}
+</script>
+{% endblock %}

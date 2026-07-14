@@ -1,0 +1,135 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Payment | CYON Jalingo Diocese{% endblock %}
+
+{% block extra_head %}
+<style>
+.form-control, .form-select {
+    background-color: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #edf2f7;
+    border-radius: 10px;
+}
+.form-control:focus, .form-select:focus {
+    background-color: rgba(255,255,255,0.12);
+    border-color: #16a34a;
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.3);
+}
+.form-control::placeholder { color: rgba(237,242,247,0.45); }
+.form-label { color: rgba(237,242,247,0.85); font-weight: 500; }
+.form-select option { background: #111a3a; color: #edf2f7; }
+#card-details { transition: all 0.3s ease; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-7">
+            <div class="glass-card p-4 p-md-5 shadow-lg">
+                <div class="text-center mb-4">
+                    <h1 class="display-6 fw-bold text-white mb-2">Payment</h1>
+                    <p class="text-white-50">Complete the payment for your registration.</p>
+                </div>
+
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} rounded-3 border-0 shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if registration %}
+                <div class="p-4 rounded-3 mb-4" style="background:rgba(37,99,235,0.12); border:1px solid rgba(37,99,235,0.25);">
+                    <h5 class="fw-semibold text-info mb-3"><i class="bi bi-person-badge me-2"></i>Registration Details</h5>
+                    <div class="row g-2">
+                        <div class="col-6"><span class="text-white-50 small">Name:</span><p class="text-white mb-0 fw-medium">{{ registration.name }}</p></div>
+                        <div class="col-6"><span class="text-white-50 small">Email:</span><p class="text-white mb-0 fw-medium">{{ registration.email }}</p></div>
+                        <div class="col-6"><span class="text-white-50 small">Denary:</span><p class="text-white mb-0 fw-medium">{{ registration.denary|capfirst }}</p></div>
+                        <div class="col-6"><span class="text-white-50 small">Parish:</span><p class="text-white mb-0 fw-medium">{{ registration.parish }}</p></div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning rounded-3 border-0 mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    No registration found. <a href="/register" class="alert-link">Go back to register first.</a>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/payment">
+                    {% csrf_token %}
+                    <input type="hidden" name="registration_id" value="{{ registration.id|default:'' }}">
+
+                    <div class="mb-4">
+                        <label for="paymentMethod" class="form-label">Payment Method</label>
+                        <select class="form-select" id="paymentMethod" name="payment_method">
+                            <option value="card">Card</option>
+                            <option value="mobile">Mobile</option>
+                        </select>
+                    </div>
+
+                    <div id="card-details">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label for="cardNumber" class="form-label">Card Number</label>
+                                <input type="text" class="form-control" id="cardNumber" name="card_number" placeholder="4242 4242 4242 4242" maxlength="19">
+                            </div>
+                            <div class="col-6">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiryDate" name="expiry_date" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="col-6">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4">
+                            </div>
+                            <div class="col-12">
+                                <label for="cardholderName" class="form-label">Cardholder Name</label>
+                                <input type="text" class="form-control" id="cardholderName" name="cardholder_name" placeholder="Name on card">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amount Badge -->
+                    <div class="text-center my-4 p-3 rounded-3" style="background: rgba(22,163,74,0.15); border: 1px solid rgba(22,163,74,0.3);">
+                        <p class="text-white-50 mb-1 small">Amount Due</p>
+                        <h3 class="fw-bold text-white mb-0">$25.00 <span class="text-success small">USD</span></h3>
+                    </div>
+
+                    <div class="d-flex justify-content-between gap-3">
+                        <a href="/register" class="btn btn-outline-secondary px-4">
+                            <i class="bi bi-arrow-left me-2"></i>Back
+                        </a>
+                        <button type="submit" class="btn btn-success btn-lg px-5 fw-semibold" {% if not registration %}disabled{% endif %}>
+                            <i class="bi bi-credit-card-fill me-2"></i>Pay Now
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const cardDetails = document.getElementById('card-details');
+document.getElementById('paymentMethod').addEventListener('change', function() {
+    cardDetails.style.display = this.value === 'card' ? 'block' : 'none';
+});
+// Card number formatting
+document.getElementById('cardNumber').addEventListener('input', function() {
+    let val = this.value.replace(/\D/g,'').substring(0,16);
+    this.value = val.replace(/(.{4})/g,'$1 ').trim();
+});
+// Expiry formatting
+document.getElementById('expiryDate').addEventListener('input', function() {
+    let val = this.value.replace(/\D/g,'').substring(0,4);
+    if(val.length >= 3) val = val.slice(0,2)+'/'+val.slice(2);
+    this.value = val;
+});
+</script>
+{% endblock %}

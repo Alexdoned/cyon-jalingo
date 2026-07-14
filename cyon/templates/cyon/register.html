@@ -1,0 +1,117 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Membership Registration | CYON Jalingo Diocese{% endblock %}
+
+{% block extra_head %}
+<style>
+.form-control, .form-select {
+    background-color: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #edf2f7;
+    border-radius: 10px;
+}
+.form-control:focus, .form-select:focus {
+    background-color: rgba(255,255,255,0.12);
+    border-color: #2563eb;
+    color: #fff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.3);
+}
+.form-control::placeholder { color: rgba(237,242,247,0.45); }
+.form-label { color: rgba(237,242,247,0.85); font-weight: 500; }
+.form-select option { background: #111a3a; color: #edf2f7; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8">
+            <div class="glass-card p-4 p-md-5 shadow-lg">
+                <div class="text-center mb-5">
+                    <h1 class="display-6 fw-bold text-white mb-2">Membership Registration</h1>
+                    <p class="text-white-50">Fill your details below to register. Payment is handled on the next page.</p>
+                </div>
+
+                {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} rounded-3 border-0 shadow-sm" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/register" novalidate>
+                    {% csrf_token %}
+                    <div class="row g-4">
+                        <div class="col-12 col-md-6">
+                            <label for="name" class="form-label">Full Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" value="{{ form_data.name|default:'' }}" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" value="{{ form_data.email|default:'' }}" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="phone" class="form-label">Phone <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="e.g. +2349012345678" value="{{ form_data.phone|default:'' }}" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="occupation" class="form-label">Occupation <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="occupation" name="occupation" placeholder="e.g. Student, Teacher" value="{{ form_data.occupation|default:'' }}" required>
+                        </div>
+                        <div class="col-12">
+                            <label for="address" class="form-label">Address <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="address" name="address" placeholder="Postal address" value="{{ form_data.address|default:'' }}" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="denary" class="form-label">Denary <span class="text-danger">*</span></label>
+                            <select class="form-select" id="denary" name="denary" required>
+                                <option value="" disabled {% if not form_data.denary %}selected{% endif %}>Select denary</option>
+                                {% for denary in denaries %}
+                                <option value="{{ denary }}" {% if form_data.denary == denary %}selected{% endif %}>{{ denary|capfirst }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label for="parish" class="form-label">Parish <span class="text-danger">*</span></label>
+                            <select class="form-select" id="parish" name="parish" required>
+                                <option value="" disabled selected>Select parish</option>
+                                {% if form_data.parish %}
+                                <option value="{{ form_data.parish }}" selected>{{ form_data.parish }}</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end mt-5">
+                        <button type="submit" class="btn btn-primary btn-lg px-5 fw-semibold">
+                            <i class="bi bi-arrow-right-circle-fill me-2"></i>Submit &amp; Continue to Payment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const denaryParishMap = {{ denary_parish_map_json|safe }};
+
+document.getElementById('denary').addEventListener('change', function() {
+    const denary = this.value;
+    const parishSelect = document.getElementById('parish');
+    parishSelect.innerHTML = '<option value="" disabled selected>Select parish</option>';
+    const parishes = denaryParishMap[denary] || [];
+    parishes.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        parishSelect.appendChild(opt);
+    });
+});
+</script>
+{% endblock %}

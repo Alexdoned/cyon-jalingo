@@ -1,0 +1,46 @@
+{% extends 'cyon/base.html' %}
+
+{% block title %}Upcoming Events | CYON Jalingo Diocese{% endblock %}
+
+{% block content %}
+<div class="container px-md-5">
+    <div class="glass-card p-4 p-md-5 shadow-lg">
+        <h1 class="display-5 fw-bold text-white mb-2">Upcoming Events</h1>
+        
+        {% if denary_filter %}
+        <p class="text-white-50 mb-4">
+            Filtering by denary: <span class="badge bg-info text-dark text-capitalize fs-6 px-3 py-2">{{ denary_filter }}</span>
+            <a href="/events" class="btn btn-outline-light btn-sm ms-3">Clear Filter</a>
+        </p>
+        {% else %}
+        <p class="text-white-50 mb-4">View and keep up to date with events across the Jalingo Diocese.</p>
+        {% endif %}
+
+        {% if events %}
+        <div class="row g-4">
+            {% for event in events %}
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 rounded-4 overflow-hidden shadow bg-white text-dark border-0 transition-all" style="transition: transform 0.25s ease, box-shadow 0.25s ease;" onmouseover="this.style.transform='translateY(-6px)'; this.style.boxShadow='0 1rem 3rem rgba(0,0,0,.175)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">
+                    {% if event.media.exists %}
+                        {% with first_media=event.media.all|first %}
+                        <img src="/api/events/media/{{ first_media.filename }}" alt="{{ event.title }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                        {% endwith %}
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=640&auto=format&fit=crop&q=60" alt="{{ event.title }}" class="card-img-top" style="height: 220px; object-fit: cover;">
+                    {% endif %}
+                    <div class="card-body p-4">
+                        <span class="badge bg-purple-subtle text-purple mb-2" style="color: #6b21a8; background-color: #f3e8ff;">{{ event.parish|default:"Jalingo Diocese" }}</span>
+                        <h5 class="card-title fw-bold mb-2">{{ event.title }}</h5>
+                        <p class="text-muted small mb-3"><i class="bi text-primary bi-calendar-event me-2"></i>{{ event.event_date|date:"M d, Y, h:i A" }}</p>
+                        <p class="card-text text-secondary mb-0">{{ event.description }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-white-50">No upcoming events scheduled yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

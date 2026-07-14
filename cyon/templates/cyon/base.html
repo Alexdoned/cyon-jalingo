@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CYON Jalingo Diocese{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: radial-gradient(circle at top left, rgba(147, 51, 234, 0.15), transparent 28%),
+                        radial-gradient(circle at bottom right, rgba(59, 130, 246, 0.15), transparent 28%),
+                        linear-gradient(135deg, #0a0f24 0%, #111a3a 50%, #0a0f24 100%);
+            color: #edf2f7;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+        }
+        .navbar-custom {
+            background: linear-gradient(90deg, #1e40af 0%, #2563eb 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 0.05em;
+        }
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            color: #fff !important;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .nav-link.active {
+            color: #22d3ee !important;
+            font-weight: 700;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            color: #edf2f7;
+        }
+        footer {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            color: rgba(255, 255, 255, 0.8);
+        }
+        footer a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        footer a:hover {
+            color: #22d3ee;
+            text-decoration: underline;
+        }
+        ::selection {
+            background: rgba(59, 130, 246, 0.35);
+            color: #fff;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.06);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 9999px;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom py-3 sticky-top">
+        <div class="container-fluid px-md-5">
+            <a class="navbar-brand text-uppercase" href="/">CYON Jalingo Diocese</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav align-items-center gap-2 mt-3 mt-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/' %}active{% endif %}" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/leaders/' or request.path == '/leaders' %}active{% endif %}" href="/leaders">Leaders</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/events/' or request.path == '/events' %}active{% endif %}" href="/events">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/register/' or request.path == '/register' %}active{% endif %}" href="/register">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/payment/' or request.path == '/payment' %}active{% endif %}" href="/payment">Payment</a>
+                    </li>
+                    {% if request.session.admin_id %}
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/admin-dashboard/' or request.path == '/admin-dashboard' %}active{% endif %}" href="/admin-dashboard">Admin Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-outline-danger btn-sm ms-lg-3 px-3 py-2" href="/admin-logout">Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link px-3 {% if request.path == '/admin-login/' or request.path == '/admin-login' %}active{% endif %}" href="/admin-login">Admin Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="py-5 mt-auto">
+        <div class="container px-md-5">
+            <div class="row g-4 justify-content-between align-items-start">
+                <div class="col-12 col-md-5">
+                    <h5 class="fw-bold mb-3 text-white">Catholic Youth Org of Nig. Jalingo</h5>
+                    <p class="text-white-50">Join the youth movement that builds faith, leadership, and community in the Jalingo Diocese.</p>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h6 class="fw-bold mb-3 text-white">Payment Account</h6>
+                    <p class="mb-1 text-white-50">Zenith Bank</p>
+                    <p class="mb-0 text-white-50">Account Number: 1013883316</p>
+                </div>
+                <div class="col-12 col-md-3">
+                    <h6 class="fw-bold mb-3 text-white">Quick Links</h6>
+                    <ul class="list-unstyled d-flex flex-column gap-2">
+                        <li><a href="/register"><i class="bi bi-chevron-right me-1"></i>Register</a></li>
+                        <li><a href="/payment"><i class="bi bi-chevron-right me-1"></i>Payment</a></li>
+                        <li><a href="/events"><i class="bi bi-chevron-right me-1"></i>Events</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <p class="text-center text-secondary mb-0">© 2026 Catholic Youth Org of Nig. Jalingo | Zenith Bank 1013883316</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
