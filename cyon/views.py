@@ -156,7 +156,7 @@ def payment_view(request):
             id=str(uuid.uuid4()),
             registration=registration,
             amount=25.0,
-            currency='USD',
+            currency='Naira',
             payment_method=payment_method,
             card_last_four=card_last_four,
             cardholder_name=cardholder_name or None,
