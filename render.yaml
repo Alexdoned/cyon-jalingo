@@ -17,11 +17,11 @@ services:
           name: cyon-db
           property: connectionString
       - key: DJANGO_SUPERUSER_USERNAME
-        value: admin
+        value: lanwebanu
       - key: DJANGO_SUPERUSER_EMAIL
-        value: admin@example.com
+        value: alexlanweanthony@gmail.com
       - key: DJANGO_SUPERUSER_PASSWORD
-        generateValue: true
+        value: Lanweanthony@#3456
 
 databases:
   - name: cyon-db
