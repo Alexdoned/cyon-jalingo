@@ -73,19 +73,19 @@ WSGI_APPLICATION = 'cyon_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
-# On Render, we use a persistent volume mounted at /data/ to persist our SQLite database.
-# Locally, we fall back to a local SQLite database in the project directory.
-if os.environ.get('RENDER'):
-    DATABASE_PATH = Path('/data/cyon.db')
-else:
-    DATABASE_PATH = BASE_DIR / 'cyon.db'
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DATABASE_PATH,
+# In production (on Render), we use PostgreSQL via DATABASE_URL.
+# Locally, we fall back to a local SQLite database.
+if os.environ.get('DATABASE_URL'):
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=False)
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'cyon.db',
+        }
+    }
 
 
 # Password validation
