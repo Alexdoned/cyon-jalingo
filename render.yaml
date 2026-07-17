@@ -3,7 +3,7 @@ services:
     name: cyon-jalingo
     env: python
     region: oregon
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate && python manage.py createsuperuser --noinput || true
     startCommand: gunicorn cyon_project.wsgi:application
     envVars:
       - key: SECRET_KEY
@@ -16,6 +16,12 @@ services:
         fromDatabase:
           name: cyon-db
           property: connectionString
+      - key: DJANGO_SUPERUSER_USERNAME
+        value: admin
+      - key: DJANGO_SUPERUSER_EMAIL
+        value: admin@example.com
+      - key: DJANGO_SUPERUSER_PASSWORD
+        generateValue: true
 
 databases:
   - name: cyon-db
